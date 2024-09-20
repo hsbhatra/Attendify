@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Verify OTP - Attendify
+{% endblock %}
+
+{% block content %}
+<section class="verify-otp-section py-20 px-4 text-center bg-gray-100">
+    <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Verify Your OTP</h1>
+    
+    <!-- Messages Section -->
+    <div class="messages my-4">
+        {% for message in messages %}
+        <h3 class="text-red-500 font-semibold animate__animated animate__fadeIn">{{ message }}</h3>
+        {% endfor %}
+    </div>
+
+    <!-- OTP Verification Form -->
+    <form method="post" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 animate__animated animate__zoomIn">
+        {% csrf_token %}
+        
+        <!-- Label for OTP -->
+        <label for="otp" class="block text-gray-700 text-sm font-bold mb-2">
+            Enter the OTP sent to your email:
+        </label>
+        
+        <!-- OTP Input -->
+        <input type="text" name="otp" id="otp" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4">
+        
+        <!-- Submit Button -->
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4 focus:outline-none focus:shadow-outline transition duration-300">
+            Verify OTP
+        </button>
+    </form>
+</section>
+{% endblock %}

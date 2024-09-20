@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Register - Attendify
+{% endblock %}
+
+{% block content %}
+<section class="registration-section py-20 px-4 bg-gray-100">
+    <h1 class="text-4xl font-bold mb-6 text-center animate__animated animate__fadeIn">Register Below</h1>
+
+    <div class="messages mb-6 text-center">
+        {% for message in messages %}
+            <h3 class="text-red-500 text-lg font-semibold animate__animated animate__fadeIn">{{ message }}</h3>
+        {% endfor %}
+    </div>
+
+    <form action="{% url 'register' %}" method="post" class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 max-w-lg mx-auto animate__animated animate__fadeInUp">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label for="fname" class="block text-gray-700 text-sm font-bold mb-2">First Name:</label>
+            <input type="text" id="fname" name="fname" placeholder="Enter your first name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="lname" class="block text-gray-700 text-sm font-bold mb-2">Last Name:</label>
+            <input type="text" id="lname" name="lname" placeholder="Enter your last name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="mb-6">
+            <label for="conf-password" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password:</label>
+            <input type="password" id="conf-password" name="conf-password" placeholder="Confirm your password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition duration-300">
+                Register User
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}
