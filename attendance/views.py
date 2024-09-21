@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # import datetime as dt
 from django.utils import timezone
 import qrcode
 import base64
 from io import BytesIO
+from .models import Attendance
 
 # Create your views here.
 
@@ -49,7 +50,12 @@ def convert_to_base64(img):
 
 # Check Attendance
 def check_your_attendance(request):
-    return render(request, 'attendance/check_your_attendance.html')
+    if request.user.is_authenticated:
+        # Fetch attendance records for the currently logged-in user
+        attendance_records = Attendance.objects.filter(user=request.user)
+        return render(request, 'attendance/check_your_attendance.html', {'attendance_records': attendance_records})
+    else:
+        return redirect('login')
 
 
 

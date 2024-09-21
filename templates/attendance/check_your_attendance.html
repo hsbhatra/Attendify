@@ -13,17 +13,21 @@
         <table class="min-w-full bg-white shadow-lg rounded-lg">
             <thead>
                 <tr class="bg-blue-600 text-white">
-                    <th class="py-3 px-6 text-left">Date</th>
+                    <th class="py-3 px-6 text-left">Username</th>
+                    <th class="py-3 px-6 text-left">Name</th>
+                    <th class="py-3 px-6 text-left">Email Address</th>
+                    <th class="py-3 px-6 text-left">Date & Time</th>
                     <th class="py-3 px-6 text-left">Status</th>
-                    <th class="py-3 px-6 text-left">Comments</th>
                 </tr>
             </thead>
             <tbody>
                 {% for record in attendance_records %}
                 <tr class="hover:bg-gray-100 transition duration-300">
-                    <td class="py-3 px-6">{{ record.date }}</td>
+                    <td class="py-3 px-6">{{ record.user.username }}</td>
+                    <td class="py-3 px-6">{{ record.user.first_name }} {{ record.user.last_name }}</td>
+                    <td class="py-3 px-6">{{ record.user.email }}</td>
+                    <td class="py-3 px-6">{{ record.timestamp }}</td>
                     <td class="py-3 px-6">{{ record.status }}</td>
-                    <td class="py-3 px-6">{{ record.comments }}</td>
                 </tr>
                 {% empty %}
                 <tr>

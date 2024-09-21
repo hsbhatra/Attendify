@@ -8,6 +8,7 @@ from django.contrib import messages
 from email.message import EmailMessage
 import ssl
 import smtplib
+from UserProfile.models import UserProfile
 
 # Create your views here.
 def register(request):
@@ -86,7 +87,8 @@ def verify_otp(request):
                     password=user_details['password']
                 )
                 user.save()
-
+                profile = UserProfile.objects.create(user=user)
+                profile.save()
 
                 messages.success(request, "User registered successfully. Please login.")
                 user = auth.authenticate(username=user.username, password=user_details['password'])

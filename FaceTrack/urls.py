@@ -22,9 +22,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include('RegAndAuth.urls')),
     path("", include('attendance.urls')),
+    path("", include('UserProfile.urls')),
+
     path("", views.index, name="index"),
     path("about/", views.about, name="about"),
     path("services/", views.services, name="services"),
+    
     # admin urls
     path("dashboard/", views.dashboard, name="dashboard"),
     path("take_attendance/", views.take_attendance, name="take_attendance"),
