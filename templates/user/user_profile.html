@@ -6,104 +6,117 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-12">
-    <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">User Profile</h1>
-    </div>
-
     {% if user.is_authenticated %}
-    
-    <!-- Profile Section -->
-    <div class="flex justify-center mb-10">
-        <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8 animate__animated animate__fadeInUp">
-            {% if user.profile.profile_picture %}
-            <div class="flex justify-center mb-6">
-                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="w-48 h-48 rounded-full shadow-lg object-cover">
-            </div>
-            <div class="text-center">
-                <a href="{% url 'upload_profile_picture' %}" class="text-blue-500 underline hover:text-blue-700 transition">Change Profile Picture</a>
-            </div>
-            {% else %}
-            <div class="text-center">
-                <a href="{% url 'upload_profile_picture' %}" class="text-blue-500 underline hover:text-blue-700 transition">Upload Profile Picture</a>
-            </div>
-            {% endif %}
+    <div class="bg-white shadow-lg rounded-lg p-8 animate__animated animate__fadeInUp">
+        <!-- Header Section -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome, {{ user.first_name }}!</h1>
+            <p class="text-lg text-gray-600">Manage your profile information and keep it up-to-date.</p>
         </div>
-    </div>
 
-    <!-- User Information -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 animate__animated animate__fadeInUp">
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <p class="font-bold text-lg text-gray-700">Username: <span class="font-normal">{{ user.username }}</span></p>
-            <p class="font-bold text-lg text-gray-700">First Name: <span class="font-normal">{{ user.first_name }}</span></p>
-            <p class="font-bold text-lg text-gray-700">Last Name: <span class="font-normal">{{ user.last_name }}</span></p>
-            <p class="font-bold text-lg text-gray-700">Email: <span class="font-normal">{{ user.email }}</span></p>
-        </div>
-        
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <!-- Bio Section -->
-            {% if user.profile.bio %}
-            <p class="font-bold text-lg text-gray-700">Bio: <span class="font-normal">{{ user.profile.bio }}</span></p>
-            {% else %}
-            <form action="{% url 'update_bio' %}" method="post">
-                {% csrf_token %}
-                <p class="font-bold text-lg text-gray-700">Bio:</p>
-                <textarea name="bio" placeholder="Tell us something about you!" rows="3" class="w-full p-3 border border-gray-300 rounded-md mb-4"></textarea>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition">Update</button>
-            </form>
-            {% endif %}
-
-            <!-- DOB Section -->
-            {% if user.profile.date_of_birth %}
-            <p class="font-bold text-lg text-gray-700">DOB: <span class="font-normal">{{ user.profile.date_of_birth }}</span></p>
-            {% else %}
-            <form action="{% url 'update_dob' %}" method="post">
-                {% csrf_token %}
-                <p class="font-bold text-lg text-gray-700">Date of Birth:</p>
-                <input type="date" name="date_of_birth" class="w-full p-3 border border-gray-300 rounded-md mb-4">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition">Update</button>
-            </form>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Phone Number and Address -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate__animated animate__fadeInUp">
-        <div class="bg-white shadow-md rounded-lg p-6">
-            {% if user.profile.phone_prefix and user.profile.phone_number %}
-            <p class="font-bold text-lg text-gray-700">Phone Number: <span class="font-normal">{{ user.profile.phone_prefix }} {{ user.profile.phone_number }}</span></p>
-            {% else %}
-            <form action="{% url 'update_phone' %}" method="post">
-                {% csrf_token %}
-                <p class="font-bold text-lg text-gray-700">Phone Number:</p>
-                <div class="flex space-x-2">
-                    <input type="text" placeholder="Country Code" name="phone_prefix" class="w-1/3 p-3 border border-gray-300 rounded-md">
-                    <input type="text" placeholder="Phone Number" name="phone_number" class="w-2/3 p-3 border border-gray-300 rounded-md">
+        <!-- Profile Picture and Basic Info -->
+        <div class="flex flex-col md:flex-row items-center md:items-start mb-10">
+            <!-- Profile Picture -->
+            <div class="md:w-1/3 flex justify-center md:justify-start mb-6 md:mb-0">
+                <div class="relative">
+                    {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="w-48 h-48 rounded-full shadow-lg object-cover">
+                    {% else %}
+                    <div class="w-48 h-48 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                        <span class="text-6xl font-bold">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span>
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'upload_profile_picture' %}" class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </a>
                 </div>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition mt-4">Update</button>
-            </form>
-            {% endif %}
+            </div>
+
+            <!-- Basic Information -->
+            <div class="md:w-2/3 md:pl-10">
+                <div class="space-y-4">
+                    <p class="text-xl text-gray-700"><strong>Username:</strong> {{ user.username }}</p>
+                    <p class="text-xl text-gray-700"><strong>First Name:</strong> {{ user.first_name }}</p>
+                    <p class="text-xl text-gray-700"><strong>Last Name:</strong> {{ user.last_name }}</p>
+                    <p class="text-xl text-gray-700"><strong>Email:</strong> {{ user.email }}</p>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-white shadow-md rounded-lg p-6">
-            {% if user.profile.house_number and user.profile.street_name and user.profile.city %}
-            <p class="font-bold text-lg text-gray-700">Address:</p>
-            <p class="font-normal">{{ user.profile.house_number }}, {{ user.profile.street_name }}, {{ user.profile.city }}, {{ user.profile.state }}, {{ user.profile.country }} ({{ user.profile.postal_code }})</p>
-            {% else %}
-            <form action="{% url 'update_address' %}" method="post">
-                {% csrf_token %}
-                <p class="font-bold text-lg text-gray-700">Address:</p>
-                <input type="text" placeholder="House Number" name="house_number" class="w-full p-3 border border-gray-300 rounded-md mb-2">
-                <input type="text" placeholder="Street Name" name="street_name" class="w-full p-3 border border-gray-300 rounded-md mb-2">
-                <input type="text" placeholder="City" name="city" class="w-full p-3 border border-gray-300 rounded-md mb-2">
-                <input type="text" placeholder="State" name="state" class="w-full p-3 border border-gray-300 rounded-md mb-2">
-                <input type="text" placeholder="Country" name="country" class="w-full p-3 border border-gray-300 rounded-md mb-2">
-                <input type="text" placeholder="Postal Code" name="postal_code" class="w-full p-3 border border-gray-300 rounded-md mb-4">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition">Update</button>
-            </form>
-            {% endif %}
+        <!-- Additional Information -->
+        <div class="space-y-10">
+            <!-- Bio Section -->
+            <div class="animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Bio</h2>
+                {% if user.profile.bio %}
+                <p class="text-gray-700">{{ user.profile.bio }}</p>
+                {% else %}
+                <form action="{% url 'update_bio' %}" method="post" class="space-y-4">
+                    {% csrf_token %}
+                    <textarea name="bio" placeholder="Tell us something about you!" rows="3" class="w-full p-3 border border-gray-300 rounded-md"></textarea>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">Update Bio</button>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Contact Information -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate__animated animate__fadeInUp">
+                <!-- Date of Birth -->
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Date of Birth</h2>
+                    {% if user.profile.date_of_birth %}
+                    <p class="text-gray-700">{{ user.profile.date_of_birth }}</p>
+                    {% else %}
+                    <form action="{% url 'update_dob' %}" method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="date" name="date_of_birth" class="w-full p-3 border border-gray-300 rounded-md">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">Update DOB</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <!-- Phone Number -->
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Phone Number</h2>
+                    {% if user.profile.phone_prefix and user.profile.phone_number %}
+                    <p class="text-gray-700">{{ user.profile.phone_prefix }} {{ user.profile.phone_number }}</p>
+                    {% else %}
+                    <form action="{% url 'update_phone' %}" method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <div class="flex space-x-2">
+                            <input type="text" placeholder="Country Code" name="phone_prefix" class="w-1/3 p-3 border border-gray-300 rounded-md">
+                            <input type="text" placeholder="Phone Number" name="phone_number" class="w-2/3 p-3 border border-gray-300 rounded-md">
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">Update Phone</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Address</h2>
+                {% if user.profile.house_number and user.profile.street_name and user.profile.city %}
+                <p class="text-gray-700">
+                    {{ user.profile.house_number }}, {{ user.profile.street_name }}, {{ user.profile.city }}, {{ user.profile.state }}, {{ user.profile.country }} - {{ user.profile.postal_code }}
+                </p>
+                {% else %}
+                <form action="{% url 'update_address' %}" method="post" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="text" placeholder="House Number" name="house_number" class="w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" placeholder="Street Name" name="street_name" class="w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" placeholder="City" name="city" class="w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" placeholder="State" name="state" class="w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" placeholder="Country" name="country" class="w-full p-3 border border-gray-300 rounded-md">
+                    <input type="text" placeholder="Postal Code" name="postal_code" class="w-full p-3 border border-gray-300 rounded-md">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">Update Address</button>
+                </form>
+                {% endif %}
+            </div>
         </div>
     </div>
-
     {% endif %}
 </div>
 {% endblock %}

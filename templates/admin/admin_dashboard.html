@@ -7,15 +7,32 @@
 {% block content %}
 <section class="admin-dashboard-section py-20 px-4 text-center bg-gray-100">
     {% if user.is_authenticated and user.is_superuser %}
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Welcome, {{ user.first_name }} {{ user.last_name }}!</h1>
-        <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeIn">Manage your attendance efficiently and effectively.</p>
+        <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">
+            Welcome, {{ user.first_name }} {{ user.last_name }}!
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeIn">
+            Manage your attendance efficiently and effectively.
+        </p>
     {% endif %}
 
-    <div class="flex justify-center mb-10">
+    <!-- Action Cards Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 justify-center mb-10">
+        <!-- Take Attendance Card -->
         <div class="p-6 bg-white rounded-lg shadow-lg animate__animated animate__zoomIn">
             <h2 class="text-2xl font-semibold text-blue-600 mb-4">Take Attendance</h2>
             <p class="text-gray-600 mb-4">Scan QR codes to mark attendance quickly and easily.</p>
-            <a href="{% url 'take_attendance' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">Scan QR and Take Attendance</a>
+            <a href="{% url 'take_attendance' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">
+                Scan QR and Take Attendance
+            </a>
+        </div>
+
+        <!-- View Attendance Records Card -->
+        <div class="p-6 bg-white rounded-lg shadow-lg animate__animated animate__zoomIn">
+            <h2 class="text-2xl font-semibold text-blue-600 mb-4">View Attendance Records</h2>
+            <p class="text-gray-600 mb-4">Review complete attendance history and statistics.</p>
+            <a href="{% url 'complete_attendance_records' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">
+                View Records
+            </a>
         </div>
     </div>
 </section>

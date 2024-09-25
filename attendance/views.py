@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
-# import datetime as dt
 from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.contrib.auth.models import User
 import qrcode
 import base64
 from io import BytesIO
+from datetime import datetime, timedelta
+from django.db.models import Q
 from .models import Attendance
 
 # Create your views here.
@@ -57,5 +60,65 @@ def check_your_attendance(request):
     else:
         return redirect('login')
 
+def complete_attendance_records(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        complete_attendance_records = reversed(list(Attendance.objects.all()))
+    return render(request, 'attendance/complete_attendance_records.html', {'complete_attendance_records': complete_attendance_records})
 
+def search_by_username(request):
+    filtered_attendance_records = []
 
+    if request.method == "POST":
+        username = request.POST.get('search_by_username', '').strip()
+
+        # Check if username exists and filter attendance records accordingly
+        try:
+            if User.objects.filter(username=username).exists():
+                user = User.objects.get(username=username)
+                filtered_attendance_records = reversed(Attendance.objects.filter(user=user))
+            else:
+                print(f"User with username '{username}' does not exist.")
+        except User.DoesNotExist:
+            print(f"User with username '{username}' not found.")
+        
+        # Debugging output
+        print(f"Filtered records for username '{username}': {filtered_attendance_records}")
+    
+    return render(request, 'attendance/search_by_username.html', {'filtered_attendance_records': filtered_attendance_records})
+
+def search_by_date(request):
+    if request.method == 'POST':
+        # Get the start and end dates from the form
+        start_date_str = request.POST['start_date']
+        end_date_str = request.POST['end_date']
+
+        try:
+            # Convert the start and end date strings into date objects
+            start_date = parse_date(start_date_str)
+            end_date = parse_date(end_date_str)
+
+            if start_date and end_date:
+                # Adjust the start_date to the beginning of the day (00:00:00)
+                start_datetime = datetime.combine(start_date, datetime.min.time())
+
+                # Adjust the end_date to the end of the day (23:59:59)
+                end_datetime = datetime.combine(end_date, datetime.max.time())
+
+                # Filter attendance records where the timestamp is between start_date and end_date
+                filtered_attendance_records = Attendance.objects.filter(
+                    timestamp__range=[start_datetime, end_datetime]
+                )
+            else:
+                filtered_attendance_records = []
+
+        except Exception as e:
+            # If there's an issue (e.g. date parsing), return an empty list
+            filtered_attendance_records = []
+
+        return render(request, 'attendance/search_by_date.html', {
+            'filtered_attendance_records': filtered_attendance_records,
+            'start_date': start_date_str,
+            'end_date': end_date_str
+        })
+
+    return render(request, 'attendance/search_by_date.html', {'filtered_attendance_records': []})

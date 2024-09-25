@@ -13,10 +13,10 @@
         <script src="https://cdn.tailwindcss.com"></script>
 
         <style>
-        body {
-            background-color: #f9fafb; /* Light gray background */
-        }
-    </style>
+            body {
+                background-color: #f9fafb; /* Light gray background */
+            }
+        </style>
     </head>
     <body class="text-gray-800">
         <!-- Navbar -->
@@ -24,25 +24,86 @@
             <nav class="bg-white shadow-md text-gray-800 py-4">
                 <div
                     class="container mx-auto flex justify-between items-center px-6">
+                    <!-- Logo -->
                     <a href="{% url 'index' %}"
-                        class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition duration-300">Attendify</a>
-                    <ul class="flex space-x-6">
-                        <li><a href="{% url 'about' %}" class="hover:text-blue-600 transition duration-300">About</a></li>
-                        <li><a href="{% url 'services' %}" class="hover:text-blue-600 transition duration-300">Services</a></li>
+                        class="text-2xl font-bold text-blue-600 hover:text-blue-800 transition duration-300">
+                        Attendify
+                    </a>
+
+                    <!-- Hamburger Icon -->
+                    <button
+                        class="text-gray-800 block md:hidden focus:outline-none"
+                        id="menu-button">
+                        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+
+                    <!-- Links -->
+                    <ul id="menu-links"
+                        class="hidden md:flex space-x-6 items-center">
+                        <li><a href="{% url 'about' %}"
+                                class="hover:text-blue-600 transition duration-300">About</a></li>
+                        <li><a href="{% url 'services' %}"
+                                class="hover:text-blue-600 transition duration-300">Services</a></li>
 
                         <!-- Links based on user role -->
                         {% if user.is_authenticated %}
                         {% if user.is_superuser %}
-                        <li><a href="{% url 'dashboard' %}" class="hover:text-blue-600 transition duration-300">Dashboard</a></li>
+                        <li><a href="{% url 'dashboard' %}"
+                                class="hover:text-blue-600 transition duration-300">Dashboard</a></li>
                         {% endif %}
-                        <li><a href="{% url 'logout' %}" class="hover:text-blue-600 transition duration-300">Logout</a></li>
-                        <li><a href="{% url 'profile' user.id %}" class="hover:text-blue-600 transition duration-300"><img src="{% static 'img/profile_icon.png' %}" alt="Profile Icon" class="w-8 h-8"></a></li>
+                        <li><a href="{% url 'logout' %}"
+                                class="hover:text-blue-600 transition duration-300">Logout</a></li>
+                        <li><a href="{% url 'profile' user.id %}"
+                                class="hover:text-blue-600 transition duration-300">
+                                <img src="{% static 'img/profile_icon.png' %}"
+                                    alt="Profile Icon" class="w-8 h-8">
+                            </a></li>
                         {% else %}
-                        <li><a href="{% url 'register' %}" class="hover:text-blue-600 transition duration-300">Register</a></li>
-                        <li><a href="{% url 'login' %}" class="hover:text-blue-600 transition duration-300">Login</a></li>
+                        <li><a href="{% url 'register' %}"
+                                class="hover:text-blue-600 transition duration-300">Register</a></li>
+                        <li><a href="{% url 'login' %}"
+                                class="hover:text-blue-600 transition duration-300">Login</a></li>
                         {% endif %}
                     </ul>
                 </div>
+
+                <!-- Mobile Menu (hidden by default) -->
+                <div id="mobile-menu"
+                    class="hidden md:hidden bg-white shadow-md px-6 py-4 text-center">
+                    <ul
+                        class="space-y-4 flex flex-col justify-center items-center">
+                        <li><a href="{% url 'about' %}"
+                                class="block hover:text-blue-600 transition duration-300">About</a></li>
+                        <li><a href="{% url 'services' %}"
+                                class="block hover:text-blue-600 transition duration-300">Services</a></li>
+
+                        <!-- Links based on user role for mobile -->
+                        {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                        <li><a href="{% url 'dashboard' %}"
+                                class="block hover:text-blue-600 transition duration-300">Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'logout' %}"
+                                class="block hover:text-blue-600 transition duration-300">Logout</a></li>
+                        <li><a href="{% url 'profile' user.id %}"
+                                class="block hover:text-blue-600 transition duration-300">
+                                <img src="{% static 'img/profile_icon.png' %}"
+                                    alt="Profile Icon" class="w-8 h-8">
+                            </a></li>
+                        {% else %}
+                        <li><a href="{% url 'register' %}"
+                                class="block hover:text-blue-600 transition duration-300">Register</a></li>
+                        <li><a href="{% url 'login' %}"
+                                class="block hover:text-blue-600 transition duration-300">Login</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
             </nav>
         </header>
 
@@ -82,6 +143,18 @@
                 </ul>
             </div>
         </footer>
+
+        <!-- JavaScript to handle menu toggle -->
+        <script>
+            document.getElementById('menu-button').addEventListener('click', function() {
+                var menu = document.getElementById('mobile-menu');
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                } else {
+                    menu.classList.add('hidden');
+                }
+            });
+        </script>
 
         <script src="{% static 'js/script.js' %}"></script>
     </body>
