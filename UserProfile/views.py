@@ -28,7 +28,6 @@ def upload_profile_picture(request):
     
     return render(request, 'user/upload_profile_picture.html')
 
-# View to update the bio
 @login_required
 def update_bio(request):
     if request.method == 'POST':
@@ -40,7 +39,6 @@ def update_bio(request):
             messages.success(request, 'Bio updated successfully.')
         return redirect('profile', pk=request.user.id)
 
-# View to update the date of birth
 @login_required
 def update_dob(request):
     if request.method == 'POST':
@@ -52,7 +50,6 @@ def update_dob(request):
             messages.success(request, 'Date of Birth updated successfully.')
         return redirect('profile', pk=request.user.id)
 
-# View to update the phone number
 @login_required
 def update_phone(request):
     if request.method == 'POST':
@@ -66,7 +63,6 @@ def update_phone(request):
             messages.success(request, 'Phone number updated successfully.')
         return redirect('profile', pk=request.user.id)
 
-# View to update the address
 @login_required
 def update_address(request):
     if request.method == 'POST':

@@ -23,6 +23,7 @@ urlpatterns = [
     path("", include('RegAndAuth.urls')),
     path("", include('attendance.urls')),
     path("", include('UserProfile.urls')),
+    path("", include('LeaveApp.urls')),
 
     path("", views.index, name="index"),
     path("about/", views.about, name="about"),

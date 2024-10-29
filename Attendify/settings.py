@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "RegAndAuth",
     "attendance",
     "UserProfile",
+    "LeaveApp",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "FaceTrack.urls"
+ROOT_URLCONF = "Attendify.urls"
 
 TEMPLATES = [
     {
@@ -71,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "FaceTrack.wsgi.application"
+WSGI_APPLICATION = "Attendify.wsgi.application"
 
 
 # Database
@@ -133,3 +134,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "FaceTrack.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Attendify.settings")
 
 application = get_wsgi_application()

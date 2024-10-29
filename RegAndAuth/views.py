@@ -47,7 +47,7 @@ def register(request):
                 subject = "Your OTP for Email Verification"
                 body = f"Your OTP for verifying your email is {otp}. It is valid for 5 minutes."
                 sender_email = 'hsthegreat72@gmail.com'
-                sender_email_pass = 'qnrk hhtp oyjg ankh'
+                sender_email_pass = 'sbkv qqcc hjbk ixcz'
                 autoEmail(sender_email, sender_email_pass, email, subject, body)
 
                 # Store user details temporarily in the session (without saving to the database yet)
@@ -90,7 +90,6 @@ def verify_otp(request):
                 profile = UserProfile.objects.create(user=user)
                 profile.save()
 
-                messages.success(request, "User registered successfully. Please login.")
                 user = auth.authenticate(username=user.username, password=user_details['password'])
                 if user is not None:
                     auth.login(request, user)
@@ -149,7 +148,7 @@ def forgot_password(request):
             subject = "Your OTP for Password Reset"
             body = f"Your OTP for resetting your password is {otp}. It is valid for 5 minutes."
             sender_email = 'hsthegreat72@gmail.com'
-            sender_email_pass = 'qnrk hhtp oyjg ankh'
+            sender_email_pass = 'sbkv qqcc hjbk ixcz'
             autoEmail(sender_email, sender_email_pass, email, subject, body)
 
             # Store the email temporarily in the session

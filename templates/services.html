@@ -28,10 +28,20 @@
                 {% endif %}
             </div>
         </div>
+        <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInUp">
+            <div class="p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-blue-600 mb-2">Apply For Leave</h2>
+                <p class="text-gray-600 mb-4">If you need break, just let us know in advance.</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'apply_for_leave' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300">Apply Now</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </section>
 
 {% if user.is_authenticated %}
+<!-- Display nothing! -->
 {% else %}
 <section class="call-to-action-section py-16 bg-blue-600 text-white text-center">
     <h2 class="text-3xl font-bold mb-4 animate__animated animate__fadeIn">Ready to Get Started?</h2>
