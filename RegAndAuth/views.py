@@ -27,6 +27,12 @@ def register(request):
             elif User.objects.filter(email=email).exists():
                 messages.info(request, "Email already used. Can't register again using the same email.")
                 return redirect('register')
+            elif validate_name(fname) is False:
+                messages.error(request, "First name must contain alphabets (a-z, A-Z), spaces ( ), or hyphen (-), and must be between 2-50 in length.")
+                return redirect('register')
+            elif validate_name(lname) is False:
+                messages.error(request, "Last name must contain alphabets (a-z, A-Z), spaces ( ), or hyphen (-), and must be between 2-50 in length.")
+                return redirect('register')
             elif is_validate_username(username) is False:
                 messages.error(request, "Username may contain uppercase character (A-Z), lowercase character (a-z), number (0-9), an optional underscore (_) as a special character, and It cannot contain spaces.")
                 return redirect('register')
@@ -253,6 +259,7 @@ def autoEmail(senderEmail, senderEmailPass, recieverEmail, subject, bodyOfEmail)
 PASSWORD_PATTERN = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$*^~?])[A-Za-z\d!@#$*^~?]{8,20}$')
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$')
 USERNAME_PATTERN = re.compile(r'^[A-Za-z0-9_]+$')
+name_pattern = r"^[A-Za-z]+(?:[ -][A-Za-z]+)*$"
 
 def is_validate_password(password):
     return bool(PASSWORD_PATTERN.fullmatch(password))
@@ -262,3 +269,8 @@ def is_validate_email(email):
 
 def is_validate_username(username):
     return bool(USERNAME_PATTERN.fullmatch(username))
+
+def validate_name(name):
+    if not name:
+        return False
+    return bool(re.match(name_pattern, name) and 2 <= len(name) <= 50)

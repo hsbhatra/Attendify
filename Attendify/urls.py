@@ -32,4 +32,5 @@ urlpatterns = [
     # admin urls
     path("dashboard/", views.dashboard, name="dashboard"),
     path("take_attendance/", views.take_attendance, name="take_attendance"),
+    path("leave_application_records/", views.leave_application_records, name="leave_application_records"),
 ]

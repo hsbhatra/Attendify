@@ -79,3 +79,6 @@ def take_attendance(request):
     cv2.destroyAllWindows()
     
     return redirect('dashboard')
+
+def leave_application_records(request):
+    return render(request, "LeaveApp/leave_application_records.html")
