@@ -5,5 +5,234 @@
 {% endblock %}
 
 {% block content %}
+<section class="leave-applications py-16 px-4 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Leave <span class="text-primary-500">Applications</span></h1>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Review and manage employee leave requests</p>
+        </div>
 
-{% endblock content %}
+        <!-- Filters Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 animate__animated animate__fadeInUp">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-filter mr-2 text-primary-500"></i> Status
+                    </label>
+                    <select id="status-filter" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option value="all">All Applications</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <!-- Date Range Filter -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-calendar-alt mr-2 text-primary-500"></i> Date Range
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="start-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <span class="text-gray-500">to</span>
+                        <input type="date" id="end-date" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-search mr-2 text-primary-500"></i> Search Employee
+                    </label>
+                    <div class="relative">
+                        <input type="text" placeholder="Search by name" class="w-full border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate__animated animate__fadeInUp">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-primary-500 text-white">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user mr-2"></i> Employee
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tag mr-2"></i> Leave Type
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-day mr-2"></i> Dates
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-2"></i> Duration
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle mr-2"></i> Status
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
+                                <div class="flex items-center justify-end">
+                                    <i class="fas fa-cog mr-2"></i> Actions
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Sample Data - Replace with Django template tags -->
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500">
+                                        JD
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">John Doe</div>
+                                        <div class="text-xs text-gray-500">Engineering</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                Sick Leave
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div>May 15 - May 18, 2023</div>
+                                <div class="text-xs text-gray-400">Applied: May 10</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                4 days
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-4 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pending
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end space-x-2">
+                                    <button class="text-green-600 hover:text-green-900" title="Approve">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-900" title="Reject">
+                                        <i class="fas fa-times-circle"></i>
+                                    </button>
+                                    <button class="text-blue-600 hover:text-blue-900" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Add more rows with Django template tags -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden px-6 py-12 text-center">
+                <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-500">No leave applications found</h3>
+                <p class="text-sm text-gray-400 mt-1">Try adjusting your filters</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-xs text-gray-500 mb-4 sm:mb-0">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">24</span> results
+                </div>
+                <div class="flex space-x-1">
+                    <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors text-sm">
+                        <i class="fas fa-chevron-left mr-1"></i> Previous
+                    </button>
+                    <button class="px-3 py-1 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors text-sm">
+                        Next <i class="fas fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-4">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Pending</p>
+                        <h3 class="text-2xl font-bold text-gray-800">12</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Approved</p>
+                        <h3 class="text-2xl font-bold text-gray-800">42</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-4">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Rejected</p>
+                        <h3 class="text-2xl font-bold text-gray-800">8</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mr-4">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">This Month</p>
+                        <h3 class="text-2xl font-bold text-gray-800">24</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default dates for filters
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start-date').value = today;
+        document.getElementById('end-date').value = today;
+
+        // Filter functionality
+        const statusFilter = document.getElementById('status-filter');
+        statusFilter.addEventListener('change', function() {
+            // Implement filter logic here
+            console.log('Filtering by:', this.value);
+        });
+
+        // You would add more JavaScript for:
+        // - Handling approve/reject actions
+        // - Pagination
+        // - Search functionality
+        // - Showing/hiding empty state
+    });
+</script>
+{% endblock %}

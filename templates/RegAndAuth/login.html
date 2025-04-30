@@ -5,40 +5,125 @@
 {% endblock %}
 
 {% block content %}
-<section class="login-section py-20 bg-gray-100">
-    <div class="container mx-auto">
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6 animate__animated animate__fadeInDown">Login to Attendify</h1>
-        
-        <div class="messages mb-4">
-            {% for message in messages %}
-            <h3 class="text-red-500 text-lg font-semibold animate__animated animate__fadeIn">{{ message }}</h3>
-            {% endfor %}
+<section class="login py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full animate__animated animate__fadeIn">
+        <!-- Login Card -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <!-- Card Header -->
+            <div class="bg-primary-500 text-white px-8 py-6 text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-check text-2xl"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold">Welcome Back</h1>
+                <p class="text-primary-100 mt-2">Sign in to your Attendify account</p>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-8">
+                <!-- Messages -->
+                {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %} animate__animated animate__fadeIn">
+                    <div class="flex items-center">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Login Form -->
+                <form action="{% url 'login' %}" method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="space-y-2">
+                        <label for="username" class="block text-gray-700 font-medium">
+                            <i class="fas fa-user mr-2 text-primary-500"></i> Username
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                placeholder="Enter your username" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all pl-10"
+                                required
+                                autofocus
+                            >
+                            <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <label for="password" class="block text-gray-700 font-medium">
+                            <i class="fas fa-lock mr-2 text-primary-500"></i> Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Enter your password" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all pl-10"
+                                required
+                            >
+                            <i class="fas fa-lock absolute left-3 top-3.5 text-gray-400"></i>
+                        </div>
+                        <div class="flex justify-end">
+                            <a href="{% url 'forgot_password' %}" class="text-sm text-primary-500 hover:text-primary-600 hover:underline">
+                                Forgot Password?
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Sign In
+                    </button>
+                </form>
+
+                <!-- Social Login (Optional) -->
+                <!-- <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">
+                                Or continue with
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                            <i class="fab fa-google text-red-500 mr-2"></i> Google
+                        </a>
+                        <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                            <i class="fab fa-microsoft text-blue-500 mr-2"></i> Microsoft
+                        </a>
+                    </div>
+                </div> -->
+
+                <!-- Registration Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Don't have an account? 
+                        <a href="{% url 'register' %}" class="text-primary-500 hover:text-primary-600 font-medium">
+                            <i class="fas fa-user-plus mr-1"></i> Create one
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
-
-        <form action="{% url 'login' %}" method="post" class="form-login bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto animate__animated animate__zoomIn">
-            {% csrf_token %}
-            <div class="mb-6">
-                <label for="username" class="block text-gray-700 font-bold mb-2">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
-            </div>
-
-            <div class="mb-6">
-                <label for="password" class="block text-gray-700 font-bold mb-2">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
-            </div>
-            
-            <button type="submit" class="btn bg-blue-500 text-white font-bold py-3 px-4 rounded-lg w-full hover:bg-blue-600 transition duration-300">
-                LOGIN USER
-            </button>
-                
-            <div class="forgot-password mt-4">
-                <p>Haven't registered yet? <a href="{% url 'register' %}" class="text-blue-500 hover:underline transition duration-300">Join us now!</a></p>
-                <p>Forgot Password? <a href="{% url 'forgot_password' %}" class="text-blue-500 hover:underline transition duration-300">Change password</a></p>
-            </div>
-        </form>
-        
     </div>
 </section>
+
+<style>
+    .login {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%234361ee" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+</style>
 {% endblock %}

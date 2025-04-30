@@ -1,60 +1,186 @@
 {% extends 'base.html' %}
-{% block title %}
-Attendify - Leave Application Form
-{% endblock %}
+{% block title %}Leave Application - Attendify{% endblock %}
+
 {% block content %}
+<section class="leave-application py-12 px-4 bg-gray-50 min-h-screen">
+    <div class="max-w-2xl mx-auto">
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate__animated animate__fadeInUp">
+            <!-- Form Header -->
+            <div class="bg-primary-500 text-white px-6 py-4">
+                <h1 class="text-2xl md:text-3xl font-bold flex items-center">
+                    <i class="fas fa-calendar-minus mr-3"></i> Leave Application
+                </h1>
+                <p class="text-primary-100 mt-1">Fill out this form to request time off</p>
+            </div>
 
-<div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-    <h1 class="text-3xl font-bold text-blue-600 mb-6">Leave Application Form</h1>
+            <!-- Form Body -->
+            <form method="post" enctype="multipart/form-data" class="p-6 space-y-6">
+                {% csrf_token %}
 
-    <form action method="post" class="space-y-4">
-        {% csrf_token %}
+                <!-- Leave Type -->
+                <div class="space-y-2">
+                    <label for="leave_type" class="block text-gray-700 font-medium">
+                        <i class="fas fa-tag mr-2 text-primary-500"></i> Type of Leave
+                    </label>
+                    <select name="leave_type" id="leave_type" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                            required>
+                        <option value="" disabled selected>Select leave type</option>
+                        <option value="casual">Casual Leave</option>
+                        <option value="sick">Sick Leave</option>
+                        <option value="maternity">Maternity Leave</option>
+                        <option value="paternity">Paternity Leave</option>
+                        <option value="emergency">Emergency Leave</option>
+                        <option value="study">Study Leave</option>
+                        <option value="unpaid">Unpaid Leave</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Select the appropriate leave type from the dropdown</p>
+                </div>
 
-        <!-- Type of Leave -->
-        <div>
-            <label for="leave_type" class="block text-gray-700 font-semibold mb-2">Type of Leave:</label>
-            <select name="leave_type" id="leave_type" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <option value="casual">Casual Leave - Used for personal reasons or emergencies.</option>
-                <option value="compensatory">Compensatory Leave - Offered for working on holidays or weekends.</option>
-                <option value="emergency">Emergency Leave - For unexpected personal or family emergencies.</option>
-                <option value="marriage">Marriage Leave - For an employee's own marriage; ranges from 1 to 5 days.</option>
-                <option value="maternity">Maternity Leave - For female employees before and after childbirth.</option>
-                <option value="paternity">Paternity Leave - Granted to new fathers; usually ranges from 1 to 4 weeks.</option>
-                <option value="sick">Sick Leave - For illness or medical emergencies; may require a medical certificate.</option>
-                <option value="study">Study Leave - For pursuing higher studies or professional development; proof of enrollment may be required.</option>
-                <option value="unpaid">Unpaid Leave - Applied for when paid leave is exhausted; salary deductions apply for the absent days.</option>
-            </select>
+                <!-- Date Range -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="start_date" class="block text-gray-700 font-medium">
+                            <i class="fas fa-calendar-day mr-2 text-primary-500"></i> Start Date
+                        </label>
+                        <input type="date" name="start_date" id="start_date" 
+                               class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                               min="{{ today|date:'Y-m-d' }}" required>
+                        <p class="text-xs text-gray-500 mt-1">First day of your leave</p>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="end_date" class="block text-gray-700 font-medium">
+                            <i class="fas fa-calendar-day mr-2 text-primary-500"></i> End Date
+                        </label>
+                        <input type="date" name="end_date" id="end_date" 
+                               class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                               min="{{ today|date:'Y-m-d' }}" required>
+                        <p class="text-xs text-gray-500 mt-1">Last day of your leave</p>
+                    </div>
+                </div>
+
+                <!-- Leave Description -->
+                <div class="space-y-2">
+                    <label for="description" class="block text-gray-700 font-medium">
+                        <i class="fas fa-align-left mr-2 text-primary-500"></i> Reason for Leave
+                    </label>
+                    <textarea name="description" id="description" rows="4"
+                              class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                              placeholder="Please provide details about your leave request" required></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Be specific about why you need this leave</p>
+                </div>
+
+                <!-- Attachments -->
+                <div class="space-y-2">
+                    <label for="attachments" class="block text-gray-700 font-medium">
+                        <i class="fas fa-paperclip mr-2 text-primary-500"></i> Supporting Documents
+                    </label>
+                    <div class="flex items-center justify-center w-full">
+                        <label for="attachments" class="flex flex-col w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-gray-50 transition-all">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 px-4">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                <p class="text-sm text-gray-500">Click to upload or drag and drop</p>
+                                <p class="text-xs text-gray-400 mt-1">PDF, DOC, JPG, or PNG (Max. 5MB each)</p>
+                            </div>
+                            <input id="attachments" name="attachments" type="file" multiple class="hidden">
+                        </label>
+                    </div>
+                    <div id="file-list" class="mt-2 space-y-2 hidden">
+                        <!-- Files will be listed here -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                    <button type="submit" class="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-2"></i> Submit Application
+                    </button>
+                    <button type="reset" class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg shadow-md transition-colors duration-300 flex items-center justify-center">
+                        <i class="fas fa-undo mr-2"></i> Reset Form
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <!-- Start Date -->
-        <div>
-            <label for="start_date" class="block text-gray-700 font-semibold mb-2">Start Date:</label>
-            <input type="date" name="start_date" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <!-- Leave Policy Info -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6 animate__animated animate__fadeIn">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-info-circle text-primary-500 mr-3"></i> Leave Policy Information
+            </h3>
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mt-1 mr-3">
+                        <i class="fas fa-check text-xs"></i>
+                    </div>
+                    <p class="text-gray-600">Casual Leave: Maximum of 12 days per year with prior approval</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mt-1 mr-3">
+                        <i class="fas fa-check text-xs"></i>
+                    </div>
+                    <p class="text-gray-600">Sick Leave: Requires medical certificate for leaves exceeding 3 days</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-6 w-6 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mt-1 mr-3">
+                        <i class="fas fa-check text-xs"></i>
+                    </div>
+                    <p class="text-gray-600">Applications should be submitted at least 3 days in advance (except emergencies)</p>
+                </div>
+            </div>
         </div>
+    </div>
+</section>
 
-        <!-- End Date -->
-        <div>
-            <label for="end_date" class="block text-gray-700 font-semibold mb-2">End Date:</label>
-            <input type="date" name="end_date" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        </div>
+<script>
+    // Date validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        // Set minimum dates to today
+        if (startDateInput) {
+            startDateInput.min = today;
+            startDateInput.value = today;
+        }
+        if (endDateInput) {
+            endDateInput.min = today;
+            endDateInput.value = today;
+        }
 
-        <!-- Description -->
-        <div>
-            <label for="description" class="block text-gray-700 font-semibold mb-2">Description:</label>
-            <input type="text" name="description" class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Briefly explain the reason for your leave" required>
-        </div>
+        // Ensure end date is not before start date
+        startDateInput.addEventListener('change', function() {
+            if (endDateInput.value && new Date(endDateInput.value) < new Date(this.value)) {
+                endDateInput.value = this.value;
+            }
+            endDateInput.min = this.value;
+        });
 
-        <!-- Attachments (If any) -->
-        <div>
-            <label for="attachments" class="block text-gray-700 font-semibold mb-2">Attachments:</label>
-            <input type="file" name="attachments" multiple class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <!-- Apply Button -->
-        <div>
-            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition duration-300">Apply</button>
-        </div>
-    </form>
-</div>
-
+        // File upload display
+        const fileInput = document.getElementById('attachments');
+        const fileList = document.getElementById('file-list');
+        
+        fileInput.addEventListener('change', function() {
+            fileList.innerHTML = '';
+            if (this.files.length > 0) {
+                fileList.classList.remove('hidden');
+                for (let i = 0; i < this.files.length; i++) {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'flex items-center justify-between bg-gray-50 p-2 rounded';
+                    fileItem.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fas fa-file text-gray-500 mr-2"></i>
+                            <span class="text-sm truncate max-w-xs">${this.files[i].name}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">${(this.files[i].size / 1024 / 1024).toFixed(2)} MB</span>
+                    `;
+                    fileList.appendChild(fileItem);
+                }
+            } else {
+                fileList.classList.add('hidden');
+            }
+        });
+    });
+</script>
 {% endblock %}

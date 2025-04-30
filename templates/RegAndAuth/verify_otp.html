@@ -5,32 +5,149 @@
 {% endblock %}
 
 {% block content %}
-<section class="verify-otp-section py-20 px-4 text-center bg-gray-100">
-    <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Verify Your OTP</h1>
-    
-    <!-- Messages Section -->
-    <div class="messages my-4">
-        {% for message in messages %}
-        <h3 class="text-red-500 font-semibold animate__animated animate__fadeIn">{{ message }}</h3>
-        {% endfor %}
-    </div>
+<section class="verify-otp py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full animate__animated animate__fadeIn">
+        <!-- OTP Verification Card -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <!-- Card Header -->
+            <div class="bg-primary-500 text-white px-8 py-6 text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-mobile-alt text-2xl"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold">Verify Your Identity</h1>
+                <p class="text-primary-100 mt-2">Enter the OTP sent to your email</p>
+            </div>
 
-    <!-- OTP Verification Form -->
-    <form method="post" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 animate__animated animate__zoomIn">
-        {% csrf_token %}
-        
-        <!-- Label for OTP -->
-        <label for="otp" class="block text-gray-700 text-sm font-bold mb-2">
-            Enter the OTP sent to your email:
-        </label>
-        
-        <!-- OTP Input -->
-        <input type="text" name="otp" id="otp" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4">
-        
-        <!-- Submit Button -->
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4 focus:outline-none focus:shadow-outline transition duration-300">
-            Verify OTP
-        </button>
-    </form>
+            <!-- Card Body -->
+            <div class="p-8">
+                <!-- Messages -->
+                {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %} animate__animated animate__fadeIn">
+                    <div class="flex items-center">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- OTP Form -->
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- OTP Input -->
+                    <div class="space-y-2">
+                        <label for="otp" class="block text-gray-700 font-medium">
+                            <i class="fas fa-shield-alt mr-2 text-primary-500"></i> One-Time Password
+                        </label>
+                        <div class="flex justify-center space-x-2">
+                            {% for i in "123456" %}
+                            <input 
+                                type="text" 
+                                name="otp_{{i}}" 
+                                id="otp_{{i}}" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-2xl border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                                oninput="moveToNext(this, 'otp_{{i|add:1}}')"
+                                onkeydown="moveToPrevious(event, 'otp_{{i|add:-1}}')"
+                            >
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="otp" id="full_otp">
+                        <p class="text-xs text-gray-500 mt-2">Enter the 6-digit code sent to your email</p>
+                    </div>
+
+                    <!-- Resend OTP -->
+                    <div class="text-center text-sm text-gray-600">
+                        Didn't receive code? 
+                        <a href="#" id="resend-link" class="text-primary-500 hover:text-primary-600 font-medium">
+                            Resend OTP
+                        </a>
+                        <span id="countdown" class="text-gray-500 ml-1">(0:30)</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+                        <i class="fas fa-check-circle mr-2"></i> Verify & Continue
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Security Note -->
+        <div class="mt-6 bg-white/50 backdrop-blur-sm p-4 rounded-lg text-center text-sm text-gray-600 animate__animated animate__fadeIn animate__delay-1s">
+            <i class="fas fa-lock mr-1 text-primary-500"></i> For security reasons, this OTP will expire in 5 minutes
+        </div>
+    </div>
 </section>
+
+<style>
+    .verify-otp {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%234361ee" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Combine OTP digits into hidden field
+        const otpInputs = document.querySelectorAll('input[name^="otp_"]');
+        const fullOtpInput = document.getElementById('full_otp');
+        
+        otpInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                let otp = '';
+                otpInputs.forEach(i => otp += i.value);
+                fullOtpInput.value = otp;
+            });
+        });
+
+        // Resend OTP countdown
+        let timeLeft = 30;
+        const countdownElement = document.getElementById('countdown');
+        const resendLink = document.getElementById('resend-link');
+        
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+        
+        const countdown = setInterval(function() {
+            timeLeft--;
+            countdownElement.textContent = `(0:${timeLeft.toString().padStart(2, '0')})`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                resendLink.style.pointerEvents = 'auto';
+                resendLink.style.opacity = '1';
+                countdownElement.textContent = '';
+            }
+        }, 1000);
+
+        // Resend OTP functionality
+        resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Implement resend OTP logic here
+            alert('New OTP has been sent to your email!');
+            timeLeft = 30;
+            resendLink.style.pointerEvents = 'none';
+            resendLink.style.opacity = '0.5';
+        });
+    });
+
+    // Auto-focus next input
+    function moveToNext(current, nextId) {
+        if (current.value.length === current.maxLength) {
+            const nextInput = document.getElementById(nextId);
+            if (nextInput) nextInput.focus();
+        }
+    }
+
+    // Handle backspace to move to previous input
+    function moveToPrevious(event, prevId) {
+        if (event.key === 'Backspace' && event.target.value === '') {
+            const prevInput = document.getElementById(prevId);
+            if (prevInput) prevInput.focus();
+        }
+    }
+</script>
 {% endblock %}

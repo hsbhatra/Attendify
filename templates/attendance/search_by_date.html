@@ -1,61 +1,191 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Attendify
-{% endblock %}
+{% block title %}Attendance Records - Attendify{% endblock %}
 
 {% block content %}
-<section class="attendance-section py-20 px-4 text-center bg-gray-100"></section>
-    <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Attendance Records</h1>
-    <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeIn">View, manage, and track attendance records for all users across the system.</p>
+<section class="attendance-records py-16 px-4 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Attendance <span class="text-primary-500">Records</span></h1>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">View and manage attendance records across your organization</p>
+        </div>
 
-    <!-- Filters and Search Section -->
-    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mb-8">
-        <!-- Searching using the username -->
-        <form action="{% url 'search_by_username' %}" method="post">
-            {% csrf_token %}
-            <input type="text" placeholder="search by username" id="search_by_username" name="search_by_username" class="border rounded-lg p-2 mx-2" required>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Search</button>
-        </form>
+        <!-- Filter Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Username Search Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg animate__animated animate__fadeInLeft">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center text-primary-500 mr-4">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Search by Username</h3>
+                </div>
+                <form action="{% url 'search_by_username' %}" method="post" class="flex flex-col sm:flex-row gap-2">
+                    {% csrf_token %}
+                    <input type="text" placeholder="Enter username" id="search_by_username" name="search_by_username" 
+                           class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                    <button type="submit" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-300 flex items-center justify-center">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                </form>
+            </div>
+
+            <!-- Date Range Search Card -->
+            <div class="bg-white p-6 rounded-xl shadow-lg animate__animated animate__fadeInRight">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center text-primary-500 mr-4">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800">Filter by Date Range</h3>
+                </div>
+                <form action="{% url 'search_by_date' %}" method="post" class="flex flex-col sm:flex-row gap-2">
+                    {% csrf_token %}
+                    <div class="flex items-center gap-2">
+                        <input type="date" id="start_date" name="start_date" value="{{ start_date }}" 
+                               class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                        <span class="text-gray-500">to</span>
+                        <input type="date" id="end_date" name="end_date" value="{{ end_date }}" 
+                               class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500" required>
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-300 flex items-center justify-center">
+                        <i class="fas fa-filter mr-2"></i> Filter
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="flex flex-wrap justify-between items-center mb-6 animate__animated animate__fadeIn">
+            <div class="text-gray-600 mb-4 sm:mb-0">
+                Showing <span class="font-semibold">{{ filtered_attendance_records|length }}</span> records
+                {% if start_date and end_date %}
+                from <span class="font-semibold">{{ start_date }}</span> to <span class="font-semibold">{{ end_date }}</span>
+                {% endif %}
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 flex items-center">
+                    <i class="fas fa-print mr-2"></i> Print
+                </button>
+                <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300 flex items-center">
+                    <i class="fas fa-download mr-2"></i> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden animate__animated animate__fadeInUp">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-primary-500 text-white">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user mr-2"></i> User
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope mr-2"></i> Email
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-day mr-2"></i> Date
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-2"></i> Time
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check-circle mr-2"></i> Status
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for record in filtered_attendance_records %}
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">{{ record.user.username }}</div>
+                                        <div class="text-sm text-gray-500">{{ record.user.first_name }} {{ record.user.last_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ record.user.email }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ record.timestamp|date:"M d, Y" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ record.timestamp|time:"h:i A" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if record.status == 'Present' %}bg-green-100 text-green-800
+                                    {% elif record.status == 'Absent' %}bg-red-100 text-red-800
+                                    {% elif record.status == 'Late' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ record.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <div class="flex flex-col items-center justify-center py-8">
+                                    <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
+                                    <p class="text-lg">No attendance records found</p>
+                                    <p class="text-sm text-gray-500 mt-2">Try adjusting your search filters</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if filtered_attendance_records %}
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between">
+                <div class="text-sm text-gray-500 mb-4 sm:mb-0">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">{{ filtered_attendance_records|length }}</span> of <span class="font-medium">{{ filtered_attendance_records|length }}</span> results
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center">
+                        <i class="fas fa-chevron-left mr-2"></i> Previous
+                    </button>
+                    <button class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center">
+                        Next <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<script>
+    // Set default dates for date inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
         
-        <!-- Searching using Start and end dates -->
-        <form action="{% url 'search_by_date' %}" method="post">
-            {% csrf_token %}
-            <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required class="border rounded-lg p-2 mx-2">
-            
-            <label for="end_date" class="text-lg">to</label>
-            <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required class="border rounded-lg p-2 mx-2">
-            
-            <button type="submit" class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Search</button>
-        </form>
-    </div>
-
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white shadow-lg rounded-lg">
-            <thead>
-                <tr class="bg-blue-600 text-white">
-                    <th class="py-3 px-6 text-left">Username</th>
-                    <th class="py-3 px-6 text-left">Name</th>
-                    <th class="py-3 px-6 text-left">Email Address</th>
-                    <th class="py-3 px-6 text-left">Date & Time</th>
-                    <th class="py-3 px-6 text-left">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in filtered_attendance_records %}
-                <tr class="hover:bg-gray-100 transition duration-300">
-                    <td class="py-3 px-6">{{ record.user.username }}</td>
-                    <td class="py-3 px-6">{{ record.user.first_name }} {{ record.user.last_name }}</td>
-                    <td class="py-3 px-6">{{ record.user.email }}</td>
-                    <td class="py-3 px-6">{{ record.timestamp }}</td>
-                    <td class="py-3 px-6">{{ record.status }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="3" class="py-3 px-6 text-gray-500">No attendance records found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        if (!startDateInput.value) {
+            startDateInput.value = today;
+        }
+        if (!endDateInput.value) {
+            endDateInput.value = today;
+        }
+    });
+</script>
 {% endblock %}

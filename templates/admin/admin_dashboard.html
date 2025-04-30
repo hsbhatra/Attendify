@@ -5,44 +5,152 @@
 {% endblock %}
 
 {% block content %}
-<section class="admin-dashboard-section py-20 px-4 text-center bg-gray-100">
-    {% if user.is_authenticated and user.is_superuser %}
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">
-            Welcome, {{ user.first_name }} {{ user.last_name }}!
-        </h1>
-        <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeIn">
-            Manage your attendance efficiently and effectively.
-        </p>
-    {% endif %}
+<section class="admin-dashboard py-16 px-4 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        {% if user.is_authenticated and user.is_superuser %}
+        <div class="text-center mb-12 animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Welcome, <span class="text-primary-500">{{ user.first_name }}</span>!</h1>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Admin Dashboard for managing attendance and user records</p>
+        </div>
+        {% endif %}
 
-    <!-- Action Cards Container -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 justify-center mb-10">
-        <!-- Take Attendance Card -->
-        <div class="p-6 bg-white rounded-lg shadow-lg animate__animated animate__zoomIn">
-            <h2 class="text-2xl font-semibold text-blue-600 mb-4">Take Attendance</h2>
-            <p class="text-gray-600 mb-4">Scan QR codes to mark attendance quickly and easily.</p>
-            <a href="{% url 'take_attendance' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">
-                Scan QR and Take Attendance
-            </a>
+        <!-- Stats Overview -->
+        <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInLeft">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-4">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Users</p>
+                        <h3 class="text-2xl font-bold text-gray-800">1,248</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-4">
+                        <i class="fas fa-calendar-check text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Today's Attendance</p>
+                        <h3 class="text-2xl font-bold text-gray-800">87%</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInRight">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mr-4">
+                        <i class="fas fa-envelope text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Pending Leaves</p>
+                        <h3 class="text-2xl font-bold text-gray-800">12</h3>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Quick Actions -->
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6 animate__animated animate__fadeIn">Quick Actions</h2>
         </div>
 
-        <!-- View Attendance Records Card -->
-        <div class="p-6 bg-white rounded-lg shadow-lg animate__animated animate__zoomIn">
-            <h2 class="text-2xl font-semibold text-blue-600 mb-4">View Attendance Records</h2>
-            <p class="text-gray-600 mb-4">Review complete attendance history and statistics.</p>
-            <a href="{% url 'complete_attendance_records' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">
-                View Records
-            </a>
+        <!-- Action Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Take Attendance Card -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInUp">
+                <div class="p-2 bg-blue-500 rounded-t-xl"></div>
+                <div class="p-8 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl mx-auto mb-6">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Take Attendance</h3>
+                    <p class="text-gray-600 mb-6">Scan QR codes to mark attendance quickly and accurately.</p>
+                    <a href="{% url 'take_attendance' %}" class="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-md transition-all duration-300">
+                        Start Scanning <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- View Records Card -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="p-2 bg-purple-500 rounded-t-xl"></div>
+                <div class="p-8 text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-2xl mx-auto mb-6">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">View Records</h3>
+                    <p class="text-gray-600 mb-6">Review complete attendance history with detailed analytics.</p>
+                    <a href="{% url 'complete_attendance_records' %}" class="inline-block px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-lg shadow-md transition-all duration-300">
+                        View Reports <i class="fas fa-external-link-alt ml-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Manage Leaves Card -->
+            <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="p-2 bg-green-500 rounded-t-xl"></div>
+                <div class="p-8 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl mx-auto mb-6">
+                        <i class="fas fa-calendar-minus"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Manage Leaves</h3>
+                    <p class="text-gray-600 mb-6">Approve, hold or deny pending leave applications.</p>
+                    <a href="{% url 'leave_application_records' %}" class="inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg shadow-md transition-all duration-300">
+                        Review Leaves <i class="fas fa-clipboard-check ml-2"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
-        <!-- View Leave Applications Card -->
-        <div class="p-6 bg-white rounded-lg shadow-lg animate__animated animate__zoomIn">
-            <h2 class="text-2xl font-semibold text-blue-600 mb-4">View Leave Applications</h2>
-            <p class="text-gray-600 mb-4">Approve, hold or deny leave applications.</p>
-            <a href="{% url 'leave_application_records' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">
-                View Applications
-            </a>
-        </div>
+        <!-- Recent Activity Section -->
+        <!-- <div class="mt-16 bg-white rounded-xl shadow-md overflow-hidden animate__animated animate__fadeIn">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Recent Activity</h3>
+            </div>
+            <div class="divide-y divide-gray-200">
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-4">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">New attendance marked for CS-101</p>
+                            <p class="text-xs text-gray-500">2 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-500 mr-4">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">Leave application submitted by John Doe</p>
+                            <p class="text-xs text-gray-500">15 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-500 mr-4">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-800">New user registered: Priya M.</p>
+                            <p class="text-xs text-gray-500">1 hour ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 text-center">
+                <a href="#" class="text-primary-500 hover:text-primary-600 font-medium text-sm">View all activity</a>
+            </div>
+        </div> -->
     </div>
 </section>
 {% endblock %}

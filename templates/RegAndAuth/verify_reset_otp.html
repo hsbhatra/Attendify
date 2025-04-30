@@ -5,23 +5,167 @@
 {% endblock %}
 
 {% block content %}
-<section class="py-20 bg-gray-100">
-    <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md animate__animated animate__fadeIn">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Verify Your OTP</h1>
+<section class="verify-reset-otp py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full animate__animated animate__fadeIn">
+        <!-- OTP Verification Card -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <!-- Card Header -->
+            <div class="bg-primary-500 text-white px-8 py-6 text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-key text-2xl"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold">Password Reset Verification</h1>
+                <p class="text-primary-100 mt-2">Enter the security code sent to your email</p>
+            </div>
 
-        <div class="p-4 mb-4 bg-red-100 border border-red-300 rounded-md">
-            {% for message in messages %}
-            <h3 class="text-red-500 text-center">{{ message }}</h3>
-            {% endfor %}
+            <!-- Card Body -->
+            <div class="p-8">
+                <!-- Messages -->
+                {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-blue-50 text-blue-700{% endif %} animate__animated animate__fadeIn">
+                    <div class="flex items-center">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- OTP Form -->
+                <form action="{% url 'verify_reset_otp' %}" method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- OTP Input -->
+                    <div class="space-y-2">
+                        <label class="block text-gray-700 font-medium">
+                            <i class="fas fa-shield-alt mr-2 text-primary-500"></i> Security Code
+                        </label>
+                        <div class="flex justify-center space-x-3">
+                            {% for i in "123456" %}
+                            <input 
+                                type="text" 
+                                name="otp_{{i}}" 
+                                id="otp_{{i}}" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-2xl border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                                oninput="moveToNext(this, 'otp_{{i|add:1}}')"
+                                onkeydown="moveToPrevious(event, 'otp_{{i|add:-1}}')"
+                                autocomplete="off"
+                            >
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="otp" id="full_otp">
+                        <p class="text-xs text-gray-500 mt-2">Enter the 6-digit verification code</p>
+                    </div>
+
+                    <!-- Resend OTP -->
+                    <div class="text-center text-sm text-gray-600">
+                        Didn't receive code? 
+                        <a href="#" id="resend-link" class="text-primary-500 hover:text-primary-600 font-medium">
+                            Resend OTP
+                        </a>
+                        <span id="countdown" class="text-gray-500 ml-1">(1:00)</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+                        <i class="fas fa-unlock-alt mr-2"></i> Verify & Reset Password
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <form action="{% url 'verify_reset_otp' %}" method="post">
-            {% csrf_token %}
-            <label for="otp" class="block text-sm font-medium text-gray-700 mb-2">Enter the OTP sent to your email:</label>
-            <input type="text" id="otp" name="otp" placeholder="Enter OTP" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
-
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 animate__animated animate__pulse">Verify OTP</button>
-        </form>
+        <!-- Security Note -->
+        <div class="mt-6 bg-white/50 backdrop-blur-sm p-4 rounded-lg text-center text-sm text-gray-600 animate__animated animate__fadeIn animate__delay-1s">
+            <i class="fas fa-clock mr-1 text-primary-500"></i> This code will expire in 10 minutes
+        </div>
     </div>
 </section>
+
+<style>
+    .verify-reset-otp {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%234361ee" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Combine OTP digits into hidden field
+        const otpInputs = document.querySelectorAll('input[name^="otp_"]');
+        const fullOtpInput = document.getElementById('full_otp');
+        
+        otpInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                let otp = '';
+                otpInputs.forEach(i => otp += i.value);
+                fullOtpInput.value = otp;
+            });
+        });
+
+        // Resend OTP countdown
+        let timeLeft = 60;
+        const countdownElement = document.getElementById('countdown');
+        const resendLink = document.getElementById('resend-link');
+        
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+        
+        const countdown = setInterval(function() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `(${minutes}:${seconds.toString().padStart(2, '0')})`;
+            timeLeft--;
+            
+            if (timeLeft < 0) {
+                clearInterval(countdown);
+                resendLink.style.pointerEvents = 'auto';
+                resendLink.style.opacity = '1';
+                countdownElement.textContent = '';
+            }
+        }, 1000);
+
+        // Resend OTP functionality
+        resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Implement resend OTP logic here
+            fetch("{% url 'verify_reset_otp' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email: '{{ email }}'})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('New OTP has been sent to your email!');
+                    timeLeft = 60;
+                    resendLink.style.pointerEvents = 'none';
+                    resendLink.style.opacity = '0.5';
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                }
+            });
+        });
+    });
+
+    // Auto-focus next input
+    function moveToNext(current, nextId) {
+        if (current.value.length === current.maxLength) {
+            const nextInput = document.getElementById(nextId);
+            if (nextInput) nextInput.focus();
+        }
+    }
+
+    // Handle backspace to move to previous input
+    function moveToPrevious(event, prevId) {
+        if (event.key === 'Backspace' && event.target.value === '') {
+            const prevInput = document.getElementById(prevId);
+            if (prevInput) prevInput.focus();
+        }
+    }
+</script>
 {% endblock %}

@@ -7,86 +7,175 @@
 {% endblock %}
 
 {% block content %}
-<section class="welcome-section py-20 px-4 text-center bg-gray-100 animate__animated animate__fadeInDown">
-    <h1 class="text-5xl font-bold text-gray-800 mb-4 animate__animated animate__bounce">Welcome to Attendify!</h1>
-    <p class="text-lg text-gray-600 mb-6 animate__animated animate__fadeIn">Your efficient solution for QR code based attendance tracking.</p>
-    <div class="flex justify-center mb-8 animate__animated animate__zoomIn">
-        <img src="{% static 'img/attendance-illustration.png' %}" alt="Attendance Illustration" class="w-1/2 h-auto rounded-lg shadow-lg">
-    </div>
-    <div class="flex justify-center space-x-6">
+<section class="welcome-section py-24 px-4 text-center bg-gradient-to-br from-gray-50 to-gray-100 animate__animated animate__fadeIn">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-12 animate__animated animate__fadeInDown">
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Welcome to <span class="text-primary-500">Attendify</span>!</h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto animate__animated animate__fadeIn animate__delay-1s">Your efficient solution for QR code based attendance tracking.</p>
+        </div>
+        
+        <div class="mb-16 animate__animated animate__zoomIn animate__delay-1s">
+            <div class="relative max-w-2xl mx-auto rounded-xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-[1.02]">
+                <img src="{% static 'img/attendance-illustration.png' %}" alt="Attendance Illustration" class="w-full h-auto">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary-500/10 to-transparent"></div>
+            </div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12 animate__animated animate__fadeInUp animate__delay-1s">
+            {% if user.is_authenticated %}
+            <a href="{% url 'about' %}" class="px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                Learn More <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'register' %}" class="px-8 py-4 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                Get Started <i class="fas fa-rocket ml-2"></i>
+            </a>
+            <a href="{% url 'about' %}" class="px-8 py-4 bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-medium rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                Learn More <i class="fas fa-book-open ml-2"></i>
+            </a>
+            {% endif %}
+        </div>
+        
         {% if user.is_authenticated %}
-        <a href="{% url 'about' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow hover:bg-green-700 transition duration-300 animate__animated animate__pulse">Learn More</a>
+            <div class="animate__animated animate__fadeIn animate__delay-2s">
+                <h2 class="text-3xl font-semibold mb-2 text-gray-700">Hello, {{ user.first_name }}! <i class="fas fa-hand-wave ml-2"></i></h2>
+                <p class="text-gray-500">Ready to manage your attendance?</p>
+            </div>
         {% else %}
-        <a href="{% url 'register' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300 animate__animated animate__pulse">Get Started</a>
-        <a href="{% url 'about' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg shadow hover:bg-green-700 transition duration-300 animate__animated animate__pulse">Learn More</a>
+            <p class="text-gray-500 animate__animated animate__fadeIn animate__delay-2s">Join <span class="font-semibold text-primary-500">5,000+</span> organizations using Attendify today</p>
         {% endif %}
     </div>
-    {% if user.is_authenticated %}
-        <h2 class="text-2xl font-semibold mt-8 animate__animated animate__fadeIn">Hello, {{ user.first_name }}!</h2>
-        <p class="text-gray-500 animate__animated animate__fadeIn">Ready to manage your attendance?</p>
-    {% else %}
-        <p class="text-gray-500 mt-4 animate__animated animate__fadeIn">Join us today to streamline your attendance process.</p>
-    {% endif %}
 </section>
 
-<section class="features-section py-16 bg-white">
-    <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Features</h2>
-        <div class="flex flex-wrap justify-center">
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInLeft">
-                <div class="p-6 bg-gray-200 rounded-lg shadow">
-                    <h3 class="font-semibold text-xl mb-2">Easy QR Code Scanning</h3>
-                    <p>Quickly mark attendance using QR codes for seamless tracking.</p>
+<section class="features-section py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4 animate__animated animate__fadeIn">Powerful Features</h2>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6 animate__animated animate__fadeIn"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto animate__animated animate__fadeIn">Everything you need for seamless attendance management</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInLeft">
+                <div class="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-500 text-2xl">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-gray-800">QR Code Scanning</h3>
+                <p class="text-gray-600">Quickly mark attendance using QR codes with our lightning-fast scanner technology.</p>
+            </div>
+            
+            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInUp">
+                <div class="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-500 text-2xl">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-gray-800">Real-time Analytics</h3>
+                <p class="text-gray-600">Get live updates and comprehensive reports with beautiful visualizations.</p>
+            </div>
+            
+            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate__animated animate__fadeInRight">
+                <div class="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mb-6 text-primary-500 text-2xl">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-gray-800">Smart Dashboard</h3>
+                <p class="text-gray-600">Intuitive interface with all your attendance data at a glance.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials-section py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4 animate__animated animate__fadeIn">Trusted by Thousands</h2>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6 animate__animated animate__fadeIn"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto animate__animated animate__fadeIn">Don't just take our word for it</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInLeft">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mr-4">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">Alex J.</h4>
+                        <p class="text-sm text-gray-500">School Administrator</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic pl-2 border-l-4 border-primary-500">
+                    "Attendify has transformed our attendance tracking! The QR system saves us hours every week."
+                </blockquote>
+                <div class="mt-4 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
             </div>
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInUp">
-                <div class="p-6 bg-gray-200 rounded-lg shadow">
-                    <h3 class="font-semibold text-xl mb-2">Real-time Tracking</h3>
-                    <p>Get live updates on attendance status and reports.</p>
+            
+            <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mr-4">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">Priya M.</h4>
+                        <p class="text-sm text-gray-500">University Professor</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic pl-2 border-l-4 border-primary-500">
+                    "The real-time analytics are incredible. I can see attendance patterns instantly."
+                </blockquote>
+                <div class="mt-4 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
             </div>
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInRight">
-                <div class="p-6 bg-gray-200 rounded-lg shadow">
-                    <h3 class="font-semibold text-xl mb-2">User-friendly Dashboard</h3>
-                    <p>Manage your attendance records with an intuitive dashboard.</p>
+            
+            <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeInRight">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 mr-4">
+                        <i class="fas fa-user text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">John D.</h4>
+                        <p class="text-sm text-gray-500">Corporate Trainer</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic pl-2 border-l-4 border-primary-500">
+                    "Our training sessions have never been more organized. The dashboard is perfect for our needs."
+                </blockquote>
+                <div class="mt-4 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="testimonials-section py-16 bg-gray-100">
-    <div class="container mx-auto text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">What Our Users Say</h2>
-        <div class="flex flex-wrap justify-center">
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInLeft">
-                <blockquote class="p-6 bg-white rounded-lg shadow">
-                    <p class="italic">"Attendify has transformed the way we handle attendance! It's quick and efficient!"</p>
-                    <footer class="mt-4 font-semibold">- Alex J.</footer>
-                </blockquote>
-            </div>
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInUp">
-                <blockquote class="p-6 bg-white rounded-lg shadow">
-                    <p class="italic">"The QR code system is so easy to use. I love it!"</p>
-                    <footer class="mt-4 font-semibold">- Priya M.</footer>
-                </blockquote>
-            </div>
-            <div class="w-full md:w-1/3 p-4 animate__animated animate__fadeInRight">
-                <blockquote class="p-6 bg-white rounded-lg shadow">
-                    <p class="italic">"A must-have tool for any organization. Highly recommend!"</p>
-                    <footer class="mt-4 font-semibold">- John D.</footer>
-                </blockquote>
-            </div>
+{% if not user.is_authenticated %}
+<section class="cta-section py-24 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center">
+    <div class="max-w-4xl mx-auto px-4 animate__animated animate__fadeIn">
+        <h2 class="text-4xl font-bold mb-6">Ready to Transform Your Attendance Tracking?</h2>
+        <p class="text-xl mb-8 opacity-90">Join thousands of organizations using Attendify to save time and improve accuracy.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'register' %}" class="px-10 py-5 bg-white text-primary-500 font-bold rounded-xl shadow-xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+                Start Free Trial <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            <a href="{% url 'about' %}" class="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+                See How It Works <i class="fas fa-play-circle ml-2"></i>
+            </a>
         </div>
+        <p class="mt-8 text-sm opacity-80">No credit card required • 14-day free trial</p>
     </div>
-</section>
-
-{% if user.is_authenticated %}
-{% else %}
-<section class="call-to-action-section py-16 bg-blue-600 text-white text-center">
-    <h2 class="text-3xl font-bold mb-4 animate__animated animate__fadeIn">Ready to Get Started?</h2>
-    <p class="mb-6 animate__animated animate__fadeIn">Join Attendify today and make attendance tracking a breeze.</p>
-    <a href="{% url 'register' %}" class="bg-white text-blue-600 px-6 py-3 rounded-lg shadow hover:bg-gray-200 transition duration-300 animate__animated animate__pulse">Sign Up Now</a>
 </section>
 {% endif %}
 {% endblock %}

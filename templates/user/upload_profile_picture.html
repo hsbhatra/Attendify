@@ -5,27 +5,170 @@
 {% endblock %}
 
 {% block content %}
+<section class="upload-profile py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full animate__animated animate__fadeIn">
+        <!-- Upload Card -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <!-- Card Header -->
+            <div class="bg-primary-500 text-white px-8 py-6 text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-camera text-2xl"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold">Update Your Profile</h1>
+                <p class="text-primary-100 mt-2">Upload a new profile picture</p>
+            </div>
 
-<section class="upload-section py-16 px-4 flex justify-center items-center bg-gray-100 animate__animated animate__fadeIn">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        {% if user.is_authenticated %}
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center animate__animated animate__fadeInDown">Upload Your Profile Picture</h2>
-            
-            <form method="post" enctype="multipart/form-data" class="space-y-6">
-                {% csrf_token %}
-                <div class="flex flex-col items-center">
-                    <label for="profile_picture" class="block text-lg font-medium text-gray-700 mb-2 animate__animated animate__fadeInLeft">Profile Picture:</label>
-                    <input type="file" name="profile_picture" id="profile_picture" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-600 py-2 px-4 animate__animated animate__zoomIn" required>
+            <!-- Card Body -->
+            <div class="p-8">
+                {% if user.is_authenticated %}
+                <!-- Current Profile Picture -->
+                <div class="flex flex-col items-center mb-8 animate__animated animate__fadeIn">
+                    <div class="relative">
+                        <img id="current-avatar" src="{{ user.profile.profile_picture.url|default:'/static/img/default_avatar.png' }}" 
+                             class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                        <div class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md">
+                            <i class="fas fa-user text-primary-500"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mt-3">Current profile picture</p>
                 </div>
-                
-                <div class="flex justify-center mt-6 animate__animated animate__fadeInUp">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300">Upload</button>
+
+                <!-- Upload Form -->
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- File Upload with Preview -->
+                    <div class="space-y-2">
+                        <label for="profile_picture" class="block text-gray-700 font-medium">
+                            <i class="fas fa-cloud-upload-alt mr-2 text-primary-500"></i> Select New Image
+                        </label>
+                        <div class="flex items-center justify-center w-full">
+                            <label for="profile_picture" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-gray-50 transition-all">
+                                <div id="preview-container" class="hidden w-full h-full flex items-center justify-center">
+                                    <img id="image-preview" class="max-h-full max-w-full rounded-lg object-contain">
+                                </div>
+                                <div id="upload-instructions" class="flex flex-col items-center justify-center pt-5 pb-6 px-4">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                    <p class="text-sm text-gray-500">Click to upload or drag and drop</p>
+                                    <p class="text-xs text-gray-400 mt-1">JPG, PNG or GIF (Max. 5MB)</p>
+                                </div>
+                                <input id="profile_picture" name="profile_picture" type="file" class="hidden" accept="image/*" required>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Upload Button -->
+                    <button type="submit" id="upload-btn" disabled class="w-full bg-primary-500 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-300 opacity-50 cursor-not-allowed flex items-center justify-center">
+                        <i class="fas fa-upload mr-2"></i> Upload Picture
+                    </button>
+                </form>
+                {% else %}
+                <!-- Unauthenticated State -->
+                <div class="text-center py-8">
+                    <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lock text-2xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Authentication Required</h3>
+                    <p class="text-gray-500 mb-4">Please log in to update your profile picture</p>
+                    <a href="{% url 'login' %}?next={% url 'upload_profile_picture' %}" class="inline-block bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Log In
+                    </a>
                 </div>
-            </form>
-        {% else %}
-            <p class="text-center text-gray-600">Please log in to upload your profile picture.</p>
-        {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="mt-6 bg-white/50 backdrop-blur-sm p-4 rounded-lg text-center text-sm text-gray-600 animate__animated animate__fadeIn animate__delay-1s">
+            <i class="fas fa-info-circle mr-1 text-primary-500"></i> For best results, use a square image (minimum 200×200 pixels)
+        </div>
     </div>
 </section>
 
+<style>
+    .upload-profile {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%234361ee" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('profile_picture');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadInstructions = document.getElementById('upload-instructions');
+        const uploadBtn = document.getElementById('upload-btn');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size exceeds 5MB limit. Please choose a smaller file.');
+                        return;
+                    }
+
+                    // Check file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Only JPG, PNG, and GIF files are allowed.');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
+                        previewContainer.classList.remove('hidden');
+                        uploadInstructions.classList.add('hidden');
+                        uploadBtn.disabled = false;
+                        uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle drag and drop
+            const dropArea = document.querySelector('label[for="profile_picture"]');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('border-primary-500', 'bg-gray-100');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('border-primary-500', 'bg-gray-100');
+            }
+
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        }
+    });
+</script>
 {% endblock %}

@@ -5,27 +5,206 @@
 {% endblock %}
 
 {% block content %}
-<section class="admin-dashboard py-10 px-4 bg-gray-100">
-    <div class="container mx-auto">
-        <h2 class="text-4xl font-bold text-center text-gray-800 mb-10 animate__animated animate__fadeInDown">All Registered Users</h2>
+<section class="admin-users py-12 px-4 bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">User <span class="text-primary-500">Management</span></h1>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">View and manage all registered users in your system</p>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Search and Filter Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 animate__animated animate__fadeInUp">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Search Box -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-search mr-2 text-primary-500"></i> Search Users
+                    </label>
+                    <input type="text" id="user-search" placeholder="Search by name, email or username" 
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                </div>
+
+                <!-- Filter by Role -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user-tag mr-2 text-primary-500"></i> Filter by Role
+                    </label>
+                    <select id="role-filter" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <option value="all">All Users</option>
+                        <option value="admin">Admins Only</option>
+                        <option value="regular">Regular Users</option>
+                    </select>
+                </div>
+
+                <!-- Filter by Status -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user-check mr-2 text-primary-500"></i> Filter by Status
+                    </label>
+                    <select id="status-filter" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active Only</option>
+                        <option value="inactive">Inactive Only</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="users-container">
             {% for u in users %}
-            <div class="card p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 animate__animated animate__fadeInUp">
-                <a href="{% url 'profile' u.id %}" class="text-decoration-none">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-2">Name: {{ u.first_name }} {{ u.last_name }}</h3>
-                    <h5 class="text-lg font-medium text-gray-700 mb-3">Username: {{ u.username }}</h5>
-                    <p class="text-gray-600">Bio: {{ u.profile.bio|truncatewords:15 }}</p>
-                </a>
+            <div class="user-card bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden animate__animated animate__fadeInUp">
+                <div class="p-6">
+                    <!-- User Header -->
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center text-primary-500 text-xl font-bold mr-4">
+                            {{ u.first_name|first|upper }}{{ u.last_name|first|upper }}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">{{ u.first_name }} {{ u.last_name }}</h3>
+                            <p class="text-sm text-gray-500">@{{ u.username }}</p>
+                        </div>
+                    </div>
+
+                    <!-- User Details -->
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope mr-2 text-primary-500"></i>
+                            <span>{{ u.email }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-primary-500"></i>
+                            <span>Joined {{ u.date_joined|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-user-shield mr-2 text-primary-500"></i>
+                            <span>
+                                {% if u.is_superuser %}
+                                <span class="text-green-600 font-medium">Admin</span>
+                                {% else %}
+                                <span class="text-blue-600">Regular User</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- User Actions -->
+                    <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
+                        <a href="{% url 'profile' u.id %}" class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-600 px-3 py-2 rounded-lg text-center text-sm font-medium transition-colors">
+                            <i class="fas fa-eye mr-1"></i> View
+                        </a>
+                        <a href="#" class="flex-1 bg-green-100 hover:bg-green-200 text-green-600 px-3 py-2 rounded-lg text-center text-sm font-medium transition-colors">
+                            <i class="fas fa-edit mr-1"></i> Edit
+                        </a>
+                        <form method="post" action="{% url 'toggle_user_status' u.id %}" class="flex-1">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full {% if u.is_active %}bg-yellow-100 hover:bg-yellow-200 text-yellow-600{% else %}bg-purple-100 hover:bg-purple-200 text-purple-600{% endif %} px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                                <i class="fas {% if u.is_active %}fa-user-slash{% else %}fa-user-check{% endif %} mr-1"></i>
+                                {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-medium text-gray-500">No users found</h3>
+                <p class="text-gray-400 mt-2">Try adjusting your search filters</p>
             </div>
             {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if users.has_other_pages %}
+        <div class="mt-12 flex justify-center animate__animated animate__fadeIn">
+            <nav class="flex items-center space-x-2">
+                {% if users.has_previous %}
+                <a href="?page={{ users.previous_page_number }}" class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                {% endif %}
+
+                {% for i in users.paginator.page_range %}
+                {% if users.number == i %}
+                <span class="px-3 py-1 bg-primary-500 text-white rounded-lg">{{ i }}</span>
+                {% else %}
+                <a href="?page={{ i }}" class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">{{ i }}</a>
+                {% endif %}
+                {% endfor %}
+
+                {% if users.has_next %}
+                <a href="?page={{ users.next_page_number }}" class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Add User CTA -->
+<section class="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center">
+    <div class="max-w-4xl mx-auto px-4 animate__animated animate__fadeIn">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">Need to Add More Users?</h2>
+        <p class="text-xl mb-8 opacity-90">Register new users to expand your Attendify system</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'register' %}" class="px-8 py-4 bg-white text-primary-500 font-bold rounded-xl shadow-xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-user-plus mr-2"></i> Register New User
+            </a>
+            <a href="#" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-file-import mr-2"></i> Bulk Import
+            </a>
         </div>
     </div>
 </section>
 
-<section class="call-to-action-section py-16 bg-blue-600 text-white text-center">
-    <h2 class="text-3xl font-bold mb-4 animate__animated animate__fadeIn">Need to Add More Users?</h2>
-    <p class="mb-6 animate__animated animate__fadeIn">Click the button below to register new users.</p>
-    <a href="{% url 'register' %}" class="bg-white text-blue-600 px-6 py-3 rounded-lg shadow hover:bg-gray-200 transition duration-300 animate__animated animate__pulse">Register Now</a>
-</section>
+<script>
+    // Client-side search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('user-search');
+        const roleFilter = document.getElementById('role-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const userCards = document.querySelectorAll('.user-card');
+
+        function filterUsers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleValue = roleFilter.value;
+            const statusValue = statusFilter.value;
+
+            userCards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const username = card.querySelector('p').textContent.toLowerCase();
+                const email = card.querySelector('.fa-envelope').nextElementSibling.textContent.toLowerCase();
+                const role = card.querySelector('.fa-user-shield').nextElementSibling.textContent.toLowerCase();
+                const isActive = card.querySelector('.fa-user-slash, .fa-user-check').classList.contains('fa-user-check');
+
+                const matchesSearch = name.includes(searchTerm) || 
+                                    username.includes(searchTerm) || 
+                                    email.includes(searchTerm);
+                
+                const matchesRole = roleValue === 'all' || 
+                                  (roleValue === 'admin' && role.includes('admin')) ||
+                                  (roleValue === 'regular' && !role.includes('admin'));
+                
+                const matchesStatus = statusValue === 'all' ||
+                                    (statusValue === 'active' && isActive) ||
+                                    (statusValue === 'inactive' && !isActive);
+
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterUsers);
+        roleFilter.addEventListener('change', filterUsers);
+        statusFilter.addEventListener('change', filterUsers);
+    });
+</script>
 {% endblock %}

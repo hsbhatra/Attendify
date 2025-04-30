@@ -1,32 +1,81 @@
 {% extends 'base.html' %}
-{% block title %} Mark Attendance {% endblock %}
+{% block title %} Mark Attendance - Attendify {% endblock %}
 
 {% block content %}
-<section class="mark-attendance-section py-20 bg-gray-100 text-center">
-    {% if user.is_authenticated %}
-    <div class="container mx-auto">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6 animate__animated animate__fadeInDown">Mark Your Attendance</h1>
-        <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeIn">Scan the QR code below to mark your attendance.</p>
-
-        <div class="flex justify-center mb-8 animate__animated animate__zoomIn">
-            <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code"
-                class="max-w-md w-full h-auto rounded-lg shadow-lg">
+<section class="mark-attendance py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-4xl mx-auto text-center">
+        {% if user.is_authenticated %}
+        <div class="animate__animated animate__fadeIn">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Mark Your <span class="text-primary-500">Attendance</span></h1>
+            <div class="w-24 h-1.5 bg-primary-500 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 mb-8">Scan the QR code below to record your attendance</p>
         </div>
-        
-        <p class="text-gray-500 animate__animated animate__fadeIn">The QR code refreshes every 15 seconds.</p>
-    </div>
 
-    <script>
-        // Reload the page every 15 seconds
-        setInterval(function() {
-            location.reload();
-        }, 15000);
-    </script>
-    {% else %}
-    <div class="container mx-auto">
-        <h2 class="text-2xl font-semibold text-gray-800">You need to be logged in to mark attendance.</h2>
-        <p class="text-gray-500">Please <a href="{% url 'login' %}" class="text-blue-600 underline">log in</a> to access this feature.</p>
+        <!-- QR Code Container -->
+        <div class="bg-white p-8 rounded-2xl shadow-xl inline-block animate__animated animate__zoomIn">
+            <div class="relative group">
+                <img src="data:image/png;base64,{{ qr_code }}" alt="Attendance QR Code" 
+                     class="w-64 h-64 md:w-80 md:h-80 rounded-lg border-4 border-primary-500/20 transition-all duration-300 group-hover:border-primary-500/50">
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="bg-black/50 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-sync-alt mr-2"></i> Refreshes in <span id="countdown">15</span>s
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <!-- <div class="mt-12 bg-white p-6 rounded-xl shadow-md max-w-2xl mx-auto animate__animated animate__fadeInUp">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center justify-center">
+                <i class="fas fa-info-circle text-primary-500 mr-2"></i> How to mark attendance
+            </h3>
+            <ol class="text-left list-decimal list-inside space-y-2 text-gray-600">
+                <li>Open your smartphone camera or QR scanner app</li>
+                <li>Point your camera at the QR code above</li>
+                <li>Tap the notification to confirm your attendance</li>
+                <li>You'll receive a confirmation message</li>
+            </ol>
+        </div> -->
+
+        <!-- Status and Timer -->
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 animate__animated animate__fadeIn">
+            <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                <span class="text-gray-600">QR Code is active</span>
+            </div>
+            <div class="text-gray-500">
+                <i class="fas fa-clock mr-2"></i> Refreshes every <span class="font-medium">15 seconds</span>
+            </div>
+        </div>
+
+        <script>
+            // Countdown timer
+            let seconds = 15;
+            const countdownElement = document.getElementById('countdown');
+            
+            const countdown = setInterval(function() {
+                seconds--;
+                countdownElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    location.reload();
+                }
+            }, 1000);
+        </script>
+
+        {% else %}
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-md mx-auto animate__animated animate__fadeIn">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 text-2xl mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Authentication Required</h2>
+            <p class="text-gray-600 mb-6">You need to be logged in to mark attendance.</p>
+            <a href="{% url 'login' %}" class="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg shadow transition-colors duration-300 inline-flex items-center">
+                <i class="fas fa-sign-in-alt mr-2"></i> Log In Now
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </section>
 {% endblock %}
