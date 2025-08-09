@@ -1,6 +1,5 @@
-import re
-from django.core.cache import cache
 import random
+from django.core.cache import cache
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import logout as auth_logout
@@ -8,10 +7,17 @@ from django.contrib import messages
 from email.message import EmailMessage
 import ssl
 import smtplib
+# Import email utility
+from Utils.email_utils import send_email
+from django.conf import settings
 from UserProfile.models import UserProfile
+# Import utility functions
+from Utils.validation_utils import is_validate_password, is_validate_email, is_validate_username, validate_name
+from Utils.security_utils import generate_secure_qr_data, validate_qr_data
 
 # Create your views here.
 def register(request):
+    # Handles user registration and sends OTP for email verification
     if request.method == "POST":
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -52,8 +58,8 @@ def register(request):
                 # Send the OTP to the user's email
                 subject = "Your OTP for Email Verification"
                 body = f"Your OTP for verifying your email is {otp}. It is valid for 5 minutes."
-                sender_email = 'kajukatli457457@gmail.com'
-                sender_email_pass = 'ouyz rygk ttnr mjyl'
+                sender_email = settings.EMAIL_HOST_USER
+                sender_email_pass = settings.EMAIL_HOST_PASSWORD
                 autoEmail(sender_email, sender_email_pass, email, subject, body)
 
                 # Store user details temporarily in the session (without saving to the database yet)
@@ -74,6 +80,7 @@ def register(request):
         return render(request, 'RegAndAuth/register.html')
     
 def verify_otp(request):
+    # Verifies OTP sent to user's email and creates user account
     if request.method == "POST":
         entered_otp = request.POST['otp']
         email = request.session.get('user_details', {}).get('email')
@@ -113,6 +120,7 @@ def verify_otp(request):
         return render(request, 'RegAndAuth/verify_otp.html')
 
 def login(request):
+    # Handles user login with username and password validation
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -136,6 +144,7 @@ def login(request):
     return render(request, 'RegAndAuth/login.html')
 
 def forgot_password(request):
+    # Initiates password reset by sending OTP to user's email
     if request.method == "POST":
         email = request.POST['email']
         
@@ -153,8 +162,8 @@ def forgot_password(request):
             # Send the OTP to the user's email
             subject = "Your OTP for Password Reset"
             body = f"Your OTP for resetting your password is {otp}. It is valid for 5 minutes."
-            sender_email = 'kajukatli457457@gmail.com'
-            sender_email_pass = 'ouyz rygk ttnr mjyl'
+            sender_email = settings.EMAIL_HOST_USER
+            sender_email_pass = settings.EMAIL_HOST_PASSWORD
             autoEmail(sender_email, sender_email_pass, email, subject, body)
 
             # Store the email temporarily in the session
@@ -169,6 +178,7 @@ def forgot_password(request):
         return render(request, 'RegAndAuth/forgot_password.html')
 
 def verify_reset_otp(request):
+    # Verifies OTP for password reset process
     if request.method == "POST":
         entered_otp = request.POST['otp']
         email = request.session.get('reset_email')
@@ -190,6 +200,7 @@ def verify_reset_otp(request):
         return render(request, 'RegAndAuth/verify_reset_otp.html')
 
 def reset_password(request):
+    # Resets user's password after OTP verification
     if request.method == "POST":
         password = request.POST['password']
         conf_password = request.POST['conf-password']
@@ -223,54 +234,17 @@ def reset_password(request):
         return render(request, 'RegAndAuth/reset_password.html')
 
 def logout(request):
+    # Logs out the current user
     # auth_logout(request)
     auth.logout(request)
     messages.info(request, "You are now logged-out successfuly!")
     return redirect('index')
 
 
-# Additional functionalities
 def generate_otp():
-    return str(random.randint(100000, 999999))  # Generate a 6-digit OTP
+    # Generates a random 6-digit OTP for verification
+    return str(random.randint(100000, 999999))
 
 def autoEmail(senderEmail, senderEmailPass, recieverEmail, subject, bodyOfEmail):
-
-    try:
-        # Create an instance of 'EmailMessage()' which will be used to construct the email.
-        em = EmailMessage()
-        em['From'] = senderEmail  # Set the 'From' field of the email
-        em['To'] = recieverEmail  # Set the 'To' field of the email
-        em['subject'] = subject    # Set the 'subject' field of the email
-        em.set_content(bodyOfEmail)       # Set the main content of the email
-
-        # Create a default SSL context to establish a secure connection
-        context = ssl.create_default_context()
-
-        # Open a connection to the Gmail SMTP server using SMTP_SSL
-        # 'smtp.gmail.com' is the server address, 465 is the port for SSL
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login(senderEmail, senderEmailPass)    # Log in to the server using the sender's email and app password
-            smtp.sendmail(senderEmail, recieverEmail, em.as_string())   # Send the email.
-            
-    except Exception as e:
-        print(f"Error sending email: {e}")
-        # messages.error(request, "There was an issue sending the OTP. Please try again later.")
-
-PASSWORD_PATTERN = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$*^~?])[A-Za-z\d!@#$*^~?]{8,20}$')
-EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$')
-USERNAME_PATTERN = re.compile(r'^[A-Za-z0-9_]+$')
-name_pattern = r"^[A-Za-z]+(?:[ -][A-Za-z]+)*$"
-
-def is_validate_password(password):
-    return bool(PASSWORD_PATTERN.fullmatch(password))
-
-def is_validate_email(email):
-    return bool(EMAIL_PATTERN.fullmatch(email))
-
-def is_validate_username(username):
-    return bool(USERNAME_PATTERN.fullmatch(username))
-
-def validate_name(name):
-    if not name:
-        return False
-    return bool(re.match(name_pattern, name) and 2 <= len(name) <= 50)
+    # Utility wrapper for sending emails (OTP, notifications)
+    return send_email(senderEmail, senderEmailPass, recieverEmail, subject, bodyOfEmail)

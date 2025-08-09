@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+newenv/
+
+# Django stuff:
+db.sqlite3
+media/
+
+# Environment variables
+.env
+
+# Project status file
+PROJECT_STATUS.md
