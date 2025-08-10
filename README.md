@@ -7,10 +7,38 @@ Attendify is a Django-based attendance management system designed for schools, c
 - Login/logout and password reset
 - User profile management
 - QR code generation for attendance
+- Lightning-fast QR code scanning
 - Attendance tracking and reporting
-- Leave management system
-- Admin panel for user and attendance management
+- Real-time analytics and visualizations
+- Smart dashboard for admins and users
+- Leave management system with live status updates
+- Bulk user import functionality
+- Pagination, search, and filtering for user and leave records
+- Recent activity feed for admins (user registration, attendance, leave applications)
+- Role-based access and permissions (admin, user, etc.)
+- Secure enterprise-grade encryption for user data
+- Intuitive, user-friendly interface
+- Enhanced mobile-friendly UI with smooth transitions and loading animations
+- Privacy Policy, Terms of Service, and Cookie Policy pages
 - Redis and Celery integration for background tasks
+## Screenshots
+Visual overview of Attendify features and UI:
+
+| Home Page | Login | Sign Up |
+|---|---|---|
+| ![HomePage](Screen%20Shots/Full%20Page/HomePage.png) | ![LogIn](Screen%20Shots/Full%20Page/LogIn.png) | ![SignUp](Screen%20Shots/Full%20Page/SignUp.png) |
+
+| User Profile | Dynamic QR Code | Valid QR Scan |
+|---|---|---|
+| ![UserProfile](Screen%20Shots/Full%20Page/UserProfile.png) | ![DynamicQrCode](Screen%20Shots/Full%20Page/DynamicQrCode.png) | ![ValidQr](Screen%20Shots/Full%20Page/ScanningQrForAttendance_ValidQr.png) |
+
+| Invalid QR Scan | Leave Application | Attendance Records |
+|---|---|---|
+| ![InvalidQr](Screen%20Shots/Full%20Page/ScanningQrForAttendance_InvalidQr.png) | ![LeaveApp](Screen%20Shots/Full%20Page/LeaveApplicationForm.png) | ![AllAttendance](Screen%20Shots/Full%20Page/AllAttendanceRecords.png) |
+
+| User Attendance | Services | About |
+|---|---|---|
+| ![UserAttendance](Screen%20Shots/Full%20Page/UserAttendanceRecords.png) | ![ServicePage](Screen%20Shots/Full%20Page/ServicePage.png) | ![AboutPage](Screen%20Shots/Full%20Page/AboutPage.png) |
 
 ## Getting Started
 

@@ -9,6 +9,7 @@ newenv/
 # Django stuff:
 db.sqlite3
 media/
+ScreenShots/
 
 # Environment variables
 .env
